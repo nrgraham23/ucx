@@ -287,7 +287,6 @@ uct_ud_iface_create_qp(uct_ud_iface_t *self, const uct_ud_iface_config_t *config
     }
 
     self->config.max_inline = qp_init_attr.cap.max_inline_data;
-    ucs_assert_always(qp_init_attr.cap.max_inline_data >= UCT_UD_MIN_INLINE);
     uct_ib_iface_set_max_iov(&self->super, qp_init_attr.cap.max_send_sge);
 
     memset(&qp_attr, 0, sizeof(qp_attr));
@@ -542,6 +541,13 @@ void uct_ud_iface_query(uct_ud_iface_t *iface, uct_iface_attr_t *iface_attr)
 
     /* Software overhead */
     iface_attr->overhead               = 80e-9;
+
+    if(iface->config.max_inline == 0) {
+        iface_attr->cap.flags &= ~UCT_IFACE_FLAG_AM_SHORT;
+        iface_attr->cap.am.max_short = 0;
+        iface_attr->cap.am.max_hdr = 0;
+        iface_attr->cap.put.max_short = 0;
+    }
 }
 
 ucs_status_t

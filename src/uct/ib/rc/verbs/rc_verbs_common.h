@@ -38,7 +38,6 @@ typedef struct uct_rc_verbs_iface_common {
     /* TODO: make a separate datatype */
     struct {
         size_t                 short_desc_size;
-        size_t                 max_inline;
     } config;
 } uct_rc_verbs_iface_common_t;
 

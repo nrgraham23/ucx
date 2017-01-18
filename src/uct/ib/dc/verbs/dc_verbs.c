@@ -95,6 +95,11 @@ static ucs_status_t uct_dc_verbs_iface_query(uct_iface_h tl_iface, uct_iface_att
                                       UCT_IFACE_FLAG_PENDING|
                                       UCT_IFACE_FLAG_AM_CB_SYNC|UCT_IFACE_FLAG_CONNECT_TO_IFACE;
 
+    if(iface->super->super.config.max_inline == 0) {
+        iface_attr->caps.flags &= ~UCT_IFACE_FLAG_AM_SHORT;
+        iface_attr->caps.flags &= ~UCT_IFACE_FLAG_PUT_SHORT;
+    }
+
     return UCS_OK;
 }
 
@@ -812,7 +817,7 @@ static UCS_CLASS_INIT_FUNC(uct_dc_verbs_iface_t, uct_md_h md, uct_worker_h worke
         goto err_common_cleanup;
     }
 
-    self->verbs_common.config.max_inline = dci_init_attr.cap.max_inline_data;
+    self->super->super.config.max_inline = dci_init_attr.cap.max_inline_data;
 
     for (i = 0; i < self->super.tx.ndci; i++) {
         uct_rc_verbs_txcnt_init(&self->dcis_txcnt[i]);

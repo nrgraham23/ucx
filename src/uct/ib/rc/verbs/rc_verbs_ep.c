@@ -189,7 +189,7 @@ ucs_status_t uct_rc_verbs_ep_put_short(uct_ep_h tl_ep, const void *buffer,
     uct_rc_verbs_iface_t *iface = ucs_derived_of(tl_ep->iface, uct_rc_verbs_iface_t);
     uct_rc_verbs_ep_t *ep = ucs_derived_of(tl_ep, uct_rc_verbs_ep_t);
 
-    UCT_CHECK_LENGTH(length, iface->verbs_common.config.max_inline, "put_short");
+    UCT_CHECK_LENGTH(length, iface->super.config.max_inline, "put_short");
 
     UCT_RC_CHECK_RES(&iface->super, &ep->super);
     UCT_RC_VERBS_FILL_INL_PUT_WR(iface, remote_addr, rkey, buffer, length);
@@ -287,7 +287,7 @@ ucs_status_t uct_rc_verbs_ep_am_short(uct_ep_h tl_ep, uint8_t id, uint64_t hdr,
     uct_rc_verbs_ep_t *ep = ucs_derived_of(tl_ep, uct_rc_verbs_ep_t);
     uct_rc_am_short_hdr_t am;
 
-    UCT_RC_CHECK_AM_SHORT(id, length, iface->verbs_common.config.max_inline);
+    UCT_RC_CHECK_AM_SHORT(id, length, iface->super.config.max_inline);
 
     UCT_RC_CHECK_RES(&iface->super, &ep->super);
     UCT_RC_CHECK_FC(&iface->super, &ep->super, id);
@@ -540,7 +540,7 @@ ucs_status_t uct_rc_verbs_ep_fc_ctrl(uct_ep_t *tl_ep, unsigned op,
 
     /* Do not check FC WND here to avoid head-to-head deadlock.
      * Credits grant should be sent regardless of FC wnd state. */
-    ucs_assert(sizeof(hdr) <= iface->verbs_common.config.max_inline);
+    ucs_assert(sizeof(hdr) <= iface->super.config.max_inline);
     UCT_RC_CHECK_RES(&iface->super, &ep->super);
 
     hdr.am_id                     = UCT_RC_EP_FC_PURE_GRANT;
